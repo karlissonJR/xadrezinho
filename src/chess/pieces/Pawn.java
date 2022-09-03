@@ -2,13 +2,17 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
 
-    public Pawn(Board board, Color color) {
+    private ChessMatch chessMatch;
+
+    public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
     }
     
     @Override
@@ -45,6 +49,20 @@ public class Pawn extends ChessPiece {
             if(getBoard().positionExists(auxPosition) && getBoard().thereIsAPiece(auxPosition) && isThereOpponentPiece(auxPosition)) {
                 moves[auxPosition.getRow()][auxPosition.getColumn()] = true;
             }
+
+            // EN PASSANT BRANCA
+            if (position.getRow() == 3) {
+                Position leftPosition = new Position(position.getRow(), position.getColumn() - 1);
+                if (getBoard().positionExists(leftPosition) && isThereOpponentPiece(leftPosition) && getBoard().piece(leftPosition) == chessMatch.getEnPassantVunerable()) {
+                    moves[leftPosition.getRow() - 1][leftPosition.getColumn()] = true;
+                }
+
+                Position rightPosition = new Position(position.getRow(), position.getColumn() + 1);
+                if (getBoard().positionExists(rightPosition) && isThereOpponentPiece(rightPosition) && getBoard().piece(rightPosition) == chessMatch.getEnPassantVunerable()) {
+                    moves[rightPosition.getRow() - 1][rightPosition.getColumn()] = true;
+                }
+            }
+
         } else {
             auxPosition.setValues(position.getRow() + 1, position.getColumn());
 
@@ -67,6 +85,19 @@ public class Pawn extends ChessPiece {
             auxPosition.setColumn(auxPosition.getColumn() + 2);
             if(getBoard().positionExists(auxPosition) && getBoard().thereIsAPiece(auxPosition) && isThereOpponentPiece(auxPosition)) {
                 moves[auxPosition.getRow()][auxPosition.getColumn()] = true;
+            }
+
+            // EN PASSANT PRETA
+            if (position.getRow() == 4) {
+                Position leftPosition = new Position(position.getRow(), position.getColumn() - 1);
+                if (getBoard().positionExists(leftPosition) && isThereOpponentPiece(leftPosition) && getBoard().piece(leftPosition) == chessMatch.getEnPassantVunerable()) {
+                    moves[leftPosition.getRow() + 1][leftPosition.getColumn()] = true;
+                }
+
+                Position rightPosition = new Position(position.getRow(), position.getColumn() + 1);
+                if (getBoard().positionExists(rightPosition) && isThereOpponentPiece(rightPosition) && getBoard().piece(rightPosition) == chessMatch.getEnPassantVunerable()) {
+                    moves[rightPosition.getRow() + 1][rightPosition.getColumn()] = true;
+                }
             }
         }
 
